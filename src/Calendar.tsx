@@ -9,6 +9,8 @@ import 'firebase/firestore'
 import * as Types from './Types/main'
 
 const Calendar: React.FC = () => {
+  const [events, setEvents] = useState<Types.event[] | undefined>(undefined)
+  const [loading, setLoading] = useState<boolean>(true)
   useEffect(() => {
     async function getInitData() {
       const db = firebase.firestore()
@@ -16,12 +18,15 @@ const Calendar: React.FC = () => {
       const qs = await ref.get()
       const tmp: any = qs.docs.map(doc => Object.assign(doc.data(), { id: doc.id }))
       setEvents(tmp)
+      setLoading(false)
     }
 
     getInitData()
   }, [])
 
-  const [events, setEvents] = useState<Types.event[] | undefined>(undefined)
+  if (loading) {
+    return <div />
+  }
 
   return (
     <CalendarDiv>
